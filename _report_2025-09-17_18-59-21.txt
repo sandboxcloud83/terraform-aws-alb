@@ -1,0 +1,70 @@
+🔎 [0;32mIniciando análisis para el módulo: terraform-aws-alb/...[0m
+-------------------------------------------------
+--- Nivel 1: Formato (terraform fmt) ---
+examples/https_redirect/main.tf
+main.tf
+variables.tf
+
+--- Nivel 2: Linting (tflint) ---
+
+--- Nivel 3: Análisis de Seguridad (trivy) ---
+2025-09-17T18:59:21-05:00	INFO	[misconfig] Misconfiguration scanning is enabled
+2025-09-17T18:59:22-05:00	INFO	[terraform scanner] Scanning root module	file_path="examples/https_redirect"
+2025-09-17T18:59:22-05:00	WARN	[terraform parser] Variable values were not found in the environment or variable files. Evaluating may not work correctly.	module="root" variables="test_domain_name"
+2025-09-17T18:59:22-05:00	INFO	[terraform executor] Ignore finding	rule="aws-ec2-no-public-ip-subnet" range="../terraform-aws-vpc/main.tf:25"
+2025-09-17T18:59:22-05:00	INFO	[terraform executor] Ignore finding	rule="aws-ec2-no-public-ip-subnet" range="../terraform-aws-vpc/main.tf:25"
+2025-09-17T18:59:22-05:00	INFO	Detected config files	num=3
+
+Report Summary
+
+┌──────────────────────────────┬───────────┬───────────────────┐
+│            Target            │   Type    │ Misconfigurations │
+├──────────────────────────────┼───────────┼───────────────────┤
+│ ../terraform-aws-vpc/main.tf │ terraform │         0         │
+├──────────────────────────────┼───────────┼───────────────────┤
+│ examples/https_redirect      │ terraform │         0         │
+├──────────────────────────────┼───────────┼───────────────────┤
+│ main.tf                      │ terraform │         1         │
+└──────────────────────────────┴───────────┴───────────────────┘
+Legend:
+- '-': Not scanned
+- '0': Clean (no security findings detected)
+
+
+main.tf (terraform)
+===================
+Tests: 1 (SUCCESSES: 0, FAILURES: 1)
+Failures: 1 (UNKNOWN: 0, LOW: 0, MEDIUM: 0, HIGH: 1, CRITICAL: 0)
+
+AVD-AWS-0053 (HIGH): Load balancer is exposed publicly.
+═══════════════════════════════════════════════════════════════════════════════════════════════
+There are many scenarios in which you would want to expose a load balancer to the wider internet, but this check exists as a warning to prevent accidental exposure of internal assets. You should ensure that this resource should be exposed publicly.
+
+
+See https://avd.aquasec.com/misconfig/avd-aws-0053
+───────────────────────────────────────────────────────────────────────────────────────────────
+ main.tf:6
+   via main.tf:4-25 (aws_lb.main)
+    via examples/https_redirect/main.tf:80-118 (module.https_redirect_alb)
+───────────────────────────────────────────────────────────────────────────────────────────────
+   4   resource "aws_lb" "main" {
+   .   
+   6 [   internal           = var.internal
+  ..   
+  25   }
+───────────────────────────────────────────────────────────────────────────────────────────────
+
+
+
+📣 [34mNotices:[0m
+  - Version 0.66.0 of Trivy is now available, current version is 0.65.0
+
+To suppress version checks, run Trivy scans with the --skip-version-check flag
+
+
+--- Nivel 4: Validación de Ejemplos (init & validate) ---
+📂 [0;32mValidando ejemplo en: ./terraform-aws-alb//examples/https_redirect[0m
+   -> Ejecutando 'terraform init'...
+   -> Ejecutando 'terraform validate'...
+Success! The configuration is valid.
+
